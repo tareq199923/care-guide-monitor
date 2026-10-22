@@ -34,7 +34,7 @@
       "id": 6,
       "name": "Alert policy and deduplication",
       "commit": "feat(alert-policy): dedupe active alerts and track occurrences",
-      "status": "planned"
+      "status": "done"
     },
     {
       "id": 7,

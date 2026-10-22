@@ -17,6 +17,9 @@ Last updated: 2026-10-23
   unique index for active alerts
 - Commit 5: OpenAI-compatible alert writer with prompt building, one retry,
   message cleaning, and per-type template fallbacks
+- Commit 6: alert policy with deduplication, occurrence tracking, severity
+  escalation, filtering, and idempotent resolve
 
 ## Next
-- Commit 6: alert policy with deduplication and occurrence tracking
+- Commit 7: POST /monitor with validation, ApiState counters, and bounded
+  batch concurrency

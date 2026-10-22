@@ -78,6 +78,17 @@ Thresholds live in `src/config/thresholds.js`.
 A failed request with zero records produces only `FAILED_REQUEST`. A missing
 `records_returned` value produces `INVALID_DATA`, not `NO_RECORDS`.
 
+## Alert lifecycle
+
+- A new anomaly creates an active alert with an AI or fallback message.
+- Another occurrence of the same `api_name` and `type` while the alert is
+  active updates its snapshot, `occurrences`, `lastSeenAt`, and severity
+  instead of creating a duplicate. Severity only escalates, never downgrades.
+- The LLM is not called again for updates.
+- Resolving an alert sets `status` to `resolved` and `resolvedAt`. Resolving
+  an already-resolved alert changes nothing.
+- A later occurrence after resolution creates a new active alert.
+
 ## AI alert messages
 
 New alerts are written by an OpenAI-compatible chat completion. Configure
