@@ -9,6 +9,8 @@ Last updated: 2026-10-23
 - Added settled decisions, definition of done and end-of-session checklist to CLAUDE.md
 - Commit 1: npm scripts, ESLint, Jest, `npm run check`, and a passing
   mongodb-memory-server smoke test
+- Commit 2: env config, thresholds, winston logger, Express app skeleton,
+  request logging, central error handling and `GET /health`
 
 ## Next
-- Commit 2: core config, winston logger, Express app skeleton, GET /health
+- Commit 3: pure anomaly detector with unit tests

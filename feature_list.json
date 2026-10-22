@@ -10,7 +10,7 @@
       "id": 2,
       "name": "Core app, config, logging and health check",
       "commit": "feat(core): add config, logger, app skeleton and health check",
-      "status": "planned"
+      "status": "done"
     },
     {
       "id": 3,
