@@ -53,6 +53,53 @@ GET /health
 { "status": "ok", "uptime": 42 }
 ```
 
+## POST /monitor
+
+Accepts a JSON array of check results:
+
+```http
+POST /monitor
+Content-Type: application/json
+
+[
+  {
+    "api_name": "Payments API",
+    "response_time_ms": 4200,
+    "status_code": 200,
+    "records_returned": 50
+  }
+]
+```
+
+It returns the batch summary:
+
+```json
+{
+  "received": 1,
+  "processed": 1,
+  "created": 1,
+  "updated": 0,
+  "errors": []
+}
+```
+
+`created` and `updated` count alerts, not check results. Processing runs
+synchronously in chunks of `LLM_CONCURRENCY` (5), and one failed item does
+not stop the rest of the batch.
+
+A `400` is returned when the body is not a non-empty array or an item has no
+usable `api_name`. Every bad item is listed in `details`:
+
+```json
+{
+  "error": "Validation failed",
+  "details": [{ "index": 1, "message": "api_name must be a non-empty string" }]
+}
+```
+
+Wrong or missing metric fields are accepted by validation and produce an
+`INVALID_DATA` alert instead.
+
 ## Data model
 
 `Alert` stores `api_name`, `type`, `severity`, `status`, `message`,

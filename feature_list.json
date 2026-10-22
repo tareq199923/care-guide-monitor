@@ -40,7 +40,7 @@
       "id": 7,
       "name": "POST /monitor batch endpoint",
       "commit": "feat(monitor): add POST /monitor with bounded batch concurrency",
-      "status": "planned"
+      "status": "done"
     },
     {
       "id": 8,

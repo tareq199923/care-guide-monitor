@@ -1,4 +1,5 @@
 const express = require('express');
+const monitorRoutes = require('./routes/monitorRoutes');
 const requestLogger = require('./middleware/requestLogger');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -14,6 +15,8 @@ app.get('/health', (req, res) => {
     uptime: Math.round(process.uptime()),
   });
 });
+
+app.use('/monitor', monitorRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });

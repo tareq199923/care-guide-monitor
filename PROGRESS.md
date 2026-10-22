@@ -19,7 +19,8 @@ Last updated: 2026-10-23
   message cleaning, and per-type template fallbacks
 - Commit 6: alert policy with deduplication, occurrence tracking, severity
   escalation, filtering, and idempotent resolve
+- Commit 7: POST /monitor with batch validation, atomic ApiState counters,
+  allSettled processing, and LLM concurrency limited to five
 
 ## Next
-- Commit 7: POST /monitor with validation, ApiState counters, and bounded
-  batch concurrency
+- Commit 8: GET /alerts and PATCH /alerts/:id/resolve endpoints
