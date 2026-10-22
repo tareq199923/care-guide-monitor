@@ -58,7 +58,7 @@
       "id": 10,
       "name": "Final documentation and sample data",
       "commit": "docs: complete README, sample data and prompt log",
-      "status": "planned"
+      "status": "done"
     }
   ]
 }

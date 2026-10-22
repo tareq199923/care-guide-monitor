@@ -210,6 +210,12 @@ with `aiGenerated` set to false. If the LLM settings are missing, the
 fallback is used directly. The exact prompts are recorded in
 `AI_Prompts.md`.
 
+## Frontend dashboard
+
+The dashboard is served by Express at `/` once `frontend/` is present. It lists
+active alerts, supports severity and API-name filters, resolves alerts, and
+refreshes every 30 seconds. No separate build step is required.
+
 ## Status
 
 The application is under construction. Features are tracked in

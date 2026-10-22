@@ -29,7 +29,7 @@ alerts. Read this file and PROGRESS.md at the start of every session.
 - src/config       env loading and thresholds
 - src/routes       route definitions only
 - src/controllers  thin request/response handlers
-- src/services     business logic (detector, aiAlert, alertPolicy, email)
+- src/services     business logic (detector, aiAlert, alertPolicy)
 - src/models       Mongoose schemas
 - src/middleware   validation, error handler, request logging
 - src/utils        logger and helpers
@@ -51,7 +51,7 @@ alerts. Read this file and PROGRESS.md at the start of every session.
 Thresholds live in src/config/thresholds.js. Never hardcode them.
 - HIGH_RESPONSE_TIME: response_time_ms above 3000
 - FAILED_REQUEST: status_code 400 or above
-- NO_RECORDS: records_returned is 0 or missing
+- NO_RECORDS: records_returned is 0 with a valid status_code below 400
 - INVALID_DATA: wrong types or missing required fields
 - REPEATED_FAILURE: consecutive failures per api_name (3 or more = critical)
 

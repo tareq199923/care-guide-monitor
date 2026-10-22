@@ -1,0 +1,58 @@
+[
+  {
+    "label": "healthy",
+    "api_name": "Users API",
+    "response_time_ms": 120,
+    "status_code": 200,
+    "records_returned": 50
+  },
+  {
+    "label": "slow response",
+    "api_name": "Search API",
+    "response_time_ms": 4200,
+    "status_code": 200,
+    "records_returned": 12
+  },
+  {
+    "label": "failed request (4xx)",
+    "api_name": "Auth API",
+    "response_time_ms": 80,
+    "status_code": 401,
+    "records_returned": 0
+  },
+  {
+    "label": "failed request (5xx)",
+    "api_name": "Payments API",
+    "response_time_ms": 95,
+    "status_code": 503,
+    "records_returned": 0
+  },
+  {
+    "label": "no records (successful)",
+    "api_name": "Orders API",
+    "response_time_ms": 210,
+    "status_code": 200,
+    "records_returned": 0
+  },
+  {
+    "label": "invalid data (missing fields)",
+    "api_name": "Inventory API",
+    "response_time_ms": "fast",
+    "status_code": 200
+  },
+  {
+    "label": "invalid data (empty api_name)",
+    "api_name": "",
+    "response_time_ms": 100,
+    "status_code": 200,
+    "records_returned": 5
+  },
+  {
+    "label": "mixed batch",
+    "batch": [
+      { "api_name": "Users API", "response_time_ms": 90, "status_code": 200, "records_returned": 40 },
+      { "api_name": "Payments API", "response_time_ms": 3100, "status_code": 200, "records_returned": 10 },
+      { "api_name": "Payments API", "response_time_ms": 50, "status_code": 500, "records_returned": 0 }
+    ]
+  }
+]
