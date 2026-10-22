@@ -4,7 +4,7 @@
       "id": 1,
       "name": "Tooling and test database",
       "commit": "chore: add scripts, jest config and verify mongodb-memory-server",
-      "status": "active"
+      "status": "done"
     },
     {
       "id": 2,
