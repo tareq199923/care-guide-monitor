@@ -23,6 +23,8 @@ Last updated: 2026-10-23
   allSettled processing, and LLM concurrency limited to five
 - Commit 8: GET /alerts with filters and PATCH /alerts/:id/resolve with
   idempotent resolution and clear 400/404 responses
+- Commit 9: static frontend dashboard with filters, resolve action, and
+  30-second auto-refresh served by Express
 
 ## Next
-- Commit 9: frontend alert dashboard
+- Commit 10: final documentation, sample data and prompt log

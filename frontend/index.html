@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Care Guide Monitor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Care Guide Monitor</h1>
+    <p class="subtitle">Active API alerts</p>
+  </header>
+
+  <section class="filters">
+    <label>
+      Severity
+      <select id="severityFilter">
+        <option value="">All</option>
+        <option value="warning">Warning</option>
+        <option value="critical">Critical</option>
+      </select>
+    </label>
+    <label>
+      API name
+      <input type="text" id="apiNameFilter" placeholder="e.g. Payments API" />
+    </label>
+    <button id="applyFilters">Apply</button>
+    <button id="refreshBtn">Refresh</button>
+    <span id="status" class="status"></span>
+  </section>
+
+  <section id="loading" class="state hidden">Loading alerts…</section>
+  <section id="error" class="state error hidden"></section>
+  <section id="empty" class="state hidden">No active alerts. 🎉</section>
+
+  <table id="alertsTable" class="hidden">
+    <thead>
+      <tr>
+        <th>API</th>
+        <th>Type</th>
+        <th>Severity</th>
+        <th>Message</th>
+        <th>Occurrences</th>
+        <th>Last seen</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="alertsBody"></tbody>
+  </table>
+
+  <script src="app.js"></script>
+</body>
+</html>

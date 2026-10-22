@@ -23,4 +23,16 @@ module.exports = [
       }],
     },
   },
+  {
+    files: ['frontend/**/*.js'],
+    languageOptions: {
+      sourceType: 'script',
+      globals: {
+        ...globals.browser,
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
 ];

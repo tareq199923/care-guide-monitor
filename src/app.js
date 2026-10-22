@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const monitorRoutes = require('./routes/monitorRoutes');
 const alertRoutes = require('./routes/alertRoutes');
@@ -19,6 +20,8 @@ app.get('/health', (req, res) => {
 
 app.use('/monitor', monitorRoutes);
 app.use('/alerts', alertRoutes);
+
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });

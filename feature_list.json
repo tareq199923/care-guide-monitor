@@ -52,7 +52,7 @@
       "id": 9,
       "name": "Frontend alert dashboard",
       "commit": "feat(frontend): add alert dashboard with filters and resolve",
-      "status": "planned"
+      "status": "done"
     },
     {
       "id": 10,
