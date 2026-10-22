@@ -28,7 +28,7 @@
       "id": 5,
       "name": "LLM alert writer with fallback",
       "commit": "feat(ai): add alert writer with retry and template fallback",
-      "status": "planned"
+      "status": "done"
     },
     {
       "id": 6,

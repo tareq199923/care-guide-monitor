@@ -78,6 +78,19 @@ Thresholds live in `src/config/thresholds.js`.
 A failed request with zero records produces only `FAILED_REQUEST`. A missing
 `records_returned` value produces `INVALID_DATA`, not `NO_RECORDS`.
 
+## AI alert messages
+
+New alerts are written by an OpenAI-compatible chat completion. Configure
+`LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL` to enable it. The prompt
+includes the API name, anomaly type, severity, and the relevant check values
+(including `records_returned` for failed requests).
+
+The LLM is called only when a new alert is created. Each call is retried
+once, then `src/utils/fallbackMessages.js` produces a deterministic message
+with `aiGenerated` set to false. If the LLM settings are missing, the
+fallback is used directly. The exact prompts are recorded in
+`AI_Prompts.md`.
+
 ## Status
 
 The application is under construction. Features are tracked in

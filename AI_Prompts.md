@@ -81,4 +81,36 @@ I wrote and own the final decisions.
 ---
 
 ## Part 3: LLM prompts inside the app
-(Add the system and user prompt from src/services/aiAlert.js after commit 5.)
+
+Source: `src/services/aiAlert.js`. Settings: temperature `0.2`,
+`max_tokens` `120`, timeout `LLM_TIMEOUT_MS`, and one retry.
+
+### System prompt
+
+```text
+You are an on-call monitoring assistant. Write one short alert message for an engineer about an API health check.
+
+Rules:
+- 1 to 2 sentences, under 45 words.
+- Plain text only: no markdown, no emojis, no greeting, no signature.
+- State what is wrong, include the key value or status code, and the likely user impact.
+- If the request failed and records_returned is 0, mention that no records were returned.
+- Use only the supplied data. Do not invent causes, fixes, history, or severity words.
+- Return only the alert message.
+```
+
+### User prompt template
+
+```text
+Alert data:
+{ ...JSON... }
+
+Write the alert message.
+```
+
+The JSON always contains `api_name`, `anomaly_type`, and `severity`. It adds
+only the relevant fields: `response_time_ms`, `status_code`,
+`records_returned`, `threshold_ms`, `issues`, and `consecutive_failures`.
+
+If the LLM fails twice or is not configured, `src/utils/fallbackMessages.js`
+writes a deterministic message and `aiGenerated` is false.

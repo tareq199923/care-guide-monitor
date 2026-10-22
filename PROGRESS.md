@@ -15,6 +15,8 @@ Last updated: 2026-10-23
   status-aware NO_RECORDS rule and repeated-failure context
 - Commit 4: Alert and ApiState schemas, defaults, enums, and the partial
   unique index for active alerts
+- Commit 5: OpenAI-compatible alert writer with prompt building, one retry,
+  message cleaning, and per-type template fallbacks
 
 ## Next
-- Commit 5: LLM alert writer with retry and template fallback
+- Commit 6: alert policy with deduplication and occurrence tracking
