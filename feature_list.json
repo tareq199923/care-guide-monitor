@@ -46,7 +46,7 @@
       "id": 8,
       "name": "Alerts list and resolve endpoints",
       "commit": "feat(alerts): add list and resolve endpoints",
-      "status": "planned"
+      "status": "done"
     },
     {
       "id": 9,

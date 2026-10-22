@@ -100,6 +100,67 @@ usable `api_name`. Every bad item is listed in `details`:
 Wrong or missing metric fields are accepted by validation and produce an
 `INVALID_DATA` alert instead.
 
+## GET /alerts
+
+Returns active alerts, newest first.
+
+```http
+GET /alerts
+GET /alerts?severity=critical
+GET /alerts?api_name=Payments%20API
+GET /alerts?severity=warning&api_name=Payments%20API
+```
+
+```json
+{
+  "count": 1,
+  "alerts": [
+    {
+      "_id": "665f1c2b8f1b2c0012a34567",
+      "api_name": "Payments API",
+      "type": "FAILED_REQUEST",
+      "severity": "critical",
+      "status": "active",
+      "message": "Payments API is returning HTTP 500, so requests are failing.",
+      "aiGenerated": true,
+      "consecutiveFailures": 3,
+      "occurrences": 3,
+      "sourceData": {
+        "response_time_ms": 120,
+        "status_code": 500,
+        "records_returned": 0,
+        "issues": []
+      },
+      "lastSeenAt": "2026-10-23T10:00:00.000Z",
+      "resolvedAt": null,
+      "createdAt": "2026-10-23T09:55:00.000Z",
+      "updatedAt": "2026-10-23T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+An unknown `severity` returns 400. Results are not paginated.
+
+## PATCH /alerts/:id/resolve
+
+```http
+PATCH /alerts/665f1c2b8f1b2c0012a34567/resolve
+```
+
+```json
+{
+  "alert": {
+    "_id": "665f1c2b8f1b2c0012a34567",
+    "status": "resolved",
+    "resolvedAt": "2026-10-23T10:05:00.000Z"
+  }
+}
+```
+
+Resolving an already-resolved alert is a no-op. A malformed id returns 400 and
+an unknown id returns 404.
+
 ## Data model
 
 `Alert` stores `api_name`, `type`, `severity`, `status`, `message`,

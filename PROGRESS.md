@@ -21,6 +21,8 @@ Last updated: 2026-10-23
   escalation, filtering, and idempotent resolve
 - Commit 7: POST /monitor with batch validation, atomic ApiState counters,
   allSettled processing, and LLM concurrency limited to five
+- Commit 8: GET /alerts with filters and PATCH /alerts/:id/resolve with
+  idempotent resolution and clear 400/404 responses
 
 ## Next
-- Commit 8: GET /alerts and PATCH /alerts/:id/resolve endpoints
+- Commit 9: frontend alert dashboard
