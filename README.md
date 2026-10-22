@@ -53,6 +53,21 @@ GET /health
 { "status": "ok", "uptime": 42 }
 ```
 
+## Detection rules
+
+Thresholds live in `src/config/thresholds.js`.
+
+| Type | Condition | Severity |
+| --- | --- | --- |
+| `HIGH_RESPONSE_TIME` | `response_time_ms` above 3000 | warning |
+| `FAILED_REQUEST` | `status_code` 400 or above | warning for 4xx, critical for 5xx |
+| `NO_RECORDS` | successful request (`status_code` below 400) with `records_returned` equal to 0 | warning |
+| `INVALID_DATA` | wrong types or missing required fields | warning |
+| `REPEATED_FAILURE` | 3 or more consecutive failed checks for an API | critical |
+
+A failed request with zero records produces only `FAILED_REQUEST`. A missing
+`records_returned` value produces `INVALID_DATA`, not `NO_RECORDS`.
+
 ## Status
 
 The application is under construction. Features are tracked in

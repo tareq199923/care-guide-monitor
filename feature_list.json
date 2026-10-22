@@ -16,7 +16,7 @@
       "id": 3,
       "name": "Pure anomaly detector",
       "commit": "feat(detector): implement pure anomaly rules with status-aware NO_RECORDS",
-      "status": "planned"
+      "status": "done"
     },
     {
       "id": 4,

@@ -11,6 +11,8 @@ Last updated: 2026-10-23
   mongodb-memory-server smoke test
 - Commit 2: env config, thresholds, winston logger, Express app skeleton,
   request logging, central error handling and `GET /health`
+- Commit 3: pure detector for all five anomaly types, including the
+  status-aware NO_RECORDS rule and repeated-failure context
 
 ## Next
-- Commit 3: pure anomaly detector with unit tests
+- Commit 4: Alert and ApiState Mongoose schemas
