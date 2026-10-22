@@ -18,6 +18,8 @@ npm run dev
 
 - `npm start` starts the server.
 - `npm run dev` starts the server with nodemon.
+- `npm run dev:memory` starts the server with an in-memory MongoDB (no Atlas
+  needed, useful for local testing).
 - `npm run lint` runs ESLint.
 - `npm test` runs Jest.
 - `npm run check` runs lint and then the test suite. This must pass before a
