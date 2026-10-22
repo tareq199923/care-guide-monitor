@@ -22,7 +22,7 @@
       "id": 4,
       "name": "Alert and ApiState models",
       "commit": "feat(models): add Alert and ApiState schemas",
-      "status": "planned"
+      "status": "done"
     },
     {
       "id": 5,

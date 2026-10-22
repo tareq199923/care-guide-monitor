@@ -53,6 +53,16 @@ GET /health
 { "status": "ok", "uptime": 42 }
 ```
 
+## Data model
+
+`Alert` stores `api_name`, `type`, `severity`, `status`, `message`,
+`aiGenerated`, `consecutiveFailures`, `occurrences`, a `sourceData`
+snapshot, `lastSeenAt`, `resolvedAt`, and timestamps. A partial unique
+index enforces one active alert per API and anomaly type.
+
+`ApiState` stores one document per API with its consecutive failure count
+and last observed status. It survives restarts and is updated atomically.
+
 ## Detection rules
 
 Thresholds live in `src/config/thresholds.js`.
