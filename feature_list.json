@@ -1,0 +1,64 @@
+{
+  "features": [
+    {
+      "id": 1,
+      "name": "Tooling and test database",
+      "commit": "chore: add scripts, jest config and verify mongodb-memory-server",
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "name": "Core app, config, logging and health check",
+      "commit": "feat(core): add config, logger, app skeleton and health check",
+      "status": "planned"
+    },
+    {
+      "id": 3,
+      "name": "Pure anomaly detector",
+      "commit": "feat(detector): implement pure anomaly rules with status-aware NO_RECORDS",
+      "status": "planned"
+    },
+    {
+      "id": 4,
+      "name": "Alert and ApiState models",
+      "commit": "feat(models): add Alert and ApiState schemas",
+      "status": "planned"
+    },
+    {
+      "id": 5,
+      "name": "LLM alert writer with fallback",
+      "commit": "feat(ai): add alert writer with retry and template fallback",
+      "status": "planned"
+    },
+    {
+      "id": 6,
+      "name": "Alert policy and deduplication",
+      "commit": "feat(alert-policy): dedupe active alerts and track occurrences",
+      "status": "planned"
+    },
+    {
+      "id": 7,
+      "name": "POST /monitor batch endpoint",
+      "commit": "feat(monitor): add POST /monitor with bounded batch concurrency",
+      "status": "planned"
+    },
+    {
+      "id": 8,
+      "name": "Alerts list and resolve endpoints",
+      "commit": "feat(alerts): add list and resolve endpoints",
+      "status": "planned"
+    },
+    {
+      "id": 9,
+      "name": "Frontend alert dashboard",
+      "commit": "feat(frontend): add alert dashboard with filters and resolve",
+      "status": "planned"
+    },
+    {
+      "id": 10,
+      "name": "Final documentation and sample data",
+      "commit": "docs: complete README, sample data and prompt log",
+      "status": "planned"
+    }
+  ]
+}

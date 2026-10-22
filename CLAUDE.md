@@ -75,6 +75,38 @@ createdAt, resolvedAt.
 - Central error-handling middleware. No uncaught promise rejections
 - Never commit .env or any secret. Keep .env.example up to date
 
+## Decisions
+- Invalid batch items: return 400 only when the body is not a non-empty
+  array or an item has no usable api_name. Items with bad or missing
+  numeric fields still produce INVALID_DATA alerts, and the response
+  includes an errors summary.
+- Consecutive failures live in the ApiState collection, one document per
+  api_name, updated atomically.
+- The LLM is called only when a new alert is created. Updates to an active
+  alert never call the LLM. One retry, then a template fallback with
+  aiGenerated set to false.
+- Test database: mongodb-memory-server. If it cannot download or run on a
+  machine, use MONGODB_URI_TEST against a separate test database and never
+  the development database.
+- POST /monitor processes synchronously and returns 200 with
+  { received, processed, created, updated, errors }.
+- Email notifications are out of scope.
+- NO_RECORDS fires only when status_code is a valid number below 400 and
+  records_returned is 0. A failed request produces FAILED_REQUEST only.
+- LLM prompts always include records_returned when it is a valid number,
+  so a failed check can mention that zero records were returned.
+- At most LLM_CONCURRENCY (5) LLM calls run in parallel during a batch.
+  The value lives in src/config/thresholds.js.
+- The frontend ships before the final documentation pass.
+- GET /alerts returns active alerts only, newest first, with severity and
+  api_name filters. No pagination.
+- PATCH /alerts/:id/resolve is idempotent. Malformed ids return 400 and
+  unknown ids return 404.
+- Express 5 handles async route errors, so no asyncHandler wrapper is
+  needed. CORS is not needed because Express serves the frontend.
+- If LLM configuration is missing, skip the call and use the template
+  fallback.
+
 ## Conventions
 - Documentation follows implementation: never document a feature before
   its code and tests exist
@@ -102,9 +134,29 @@ createdAt, resolvedAt.
   run instructions, API examples, design decisions
 - Every prompt given to the AI is logged in AI_Prompts.md
 
+## Definition of done
+A feature is done only when all of these are true:
+- `npm run check` passes (`eslint .` then `jest`).
+- New behavior has tests, and the LLM is mocked in tests.
+- README is updated with the feature's usage or behavior.
+- AI_Prompts.md includes any prompt added or changed.
+- PROGRESS.md is updated (Done and Next).
+- No secret or API key is logged or committed.
+
+## End of session checklist
+1. Run `npm run check`.
+2. Update PROGRESS.md (Done, Next).
+3. Update feature_list.json statuses.
+4. Update AI_Prompts.md if prompts changed.
+5. Commit the changes with a clear message.
+
 ## Session protocol
-- Start of session: read PROGRESS.md
-- End of session: update PROGRESS.md (Done, Next), run tests, commit
+- Start of session: read PROGRESS.md and feature_list.json, then CLAUDE.md.
+- Before starting a new feature: mark it active in feature_list.json.
+- After a feature is verified: mark it done in feature_list.json in the
+  same commit.
+- End of session: run `npm run check`, update PROGRESS.md (Done, Next),
+  and commit.
 
 ## Deliverables (do not forget)
 - GitHub repo with full source code
