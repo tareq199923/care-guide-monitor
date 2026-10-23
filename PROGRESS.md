@@ -32,6 +32,8 @@ Last updated: 2026-10-23
 - Review fix: added static-frontend serving tests for `/` and `/app.js`
 - Review fix: retried ApiState upserts on duplicate keys and made alert
   occurrence updates atomic
+- Review fix: background dashboard refreshes no longer hide the current rows,
+  and stale responses are ignored
 
 ## Next
 - Final docs cleanup, record the 5–10 minute video, and convert

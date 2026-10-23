@@ -216,9 +216,9 @@ characters. The exact prompts are recorded in `AI_Prompts.md`.
 
 ## Frontend dashboard
 
-The dashboard is served by Express at `/` once `frontend/` is present. It lists
-active alerts, supports severity and API-name filters, resolves alerts, and
-refreshes every 30 seconds. No separate build step is required.
+The dashboard is served by Express at `/`. It lists active alerts, supports
+severity and API-name filters, resolves alerts, and refreshes every 30
+seconds without hiding the current rows. No separate build step is required.
 
 ## Status
 

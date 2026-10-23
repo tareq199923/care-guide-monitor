@@ -12,6 +12,7 @@ const tableEl = document.getElementById('alertsTable');
 const tbody = document.getElementById('alertsBody');
 
 let refreshTimer = null;
+let loadSequence = 0;
 
 function show(el) { el.classList.remove('hidden'); }
 function hide(el) { el.classList.add('hidden'); }
@@ -24,31 +25,45 @@ function buildQuery() {
   return qs ? `/alerts?${qs}` : '/alerts';
 }
 
-async function loadAlerts() {
+async function loadAlerts({ background = false } = {}) {
+  const sequence = ++loadSequence;
   hide(errorEl);
-  show(loadingEl);
-  hide(emptyEl);
-  hide(tableEl);
-  statusEl.textContent = '';
+
+  if (!background) {
+    show(loadingEl);
+    hide(emptyEl);
+    hide(tableEl);
+    statusEl.textContent = '';
+  }
 
   try {
     const res = await fetch(buildQuery());
+    if (sequence !== loadSequence) return;
+
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       throw new Error(body.error || `Request failed (${res.status})`);
     }
-    const data = await res.json();
-    const alerts = data.alerts || [];
 
+    const data = await res.json();
+    if (sequence !== loadSequence) return;
+
+    const alerts = data.alerts || [];
     hide(loadingEl);
+
     if (alerts.length === 0) {
+      hide(tableEl);
       show(emptyEl);
+      statusEl.textContent = '0 active alerts';
       return;
     }
+
+    hide(emptyEl);
     show(tableEl);
     renderRows(alerts);
     statusEl.textContent = `${data.count ?? alerts.length} active alert(s)`;
   } catch (err) {
+    if (sequence !== loadSequence) return;
     hide(loadingEl);
     errorEl.textContent = `Failed to load alerts: ${err.message}`;
     show(errorEl);
@@ -84,7 +99,7 @@ async function resolveAlert(id, btn) {
       const body = await res.json().catch(() => ({}));
       throw new Error(body.error || `Resolve failed (${res.status})`);
     }
-    await loadAlerts();
+    await loadAlerts({ background: true });
   } catch (err) {
     btn.disabled = false;
     btn.textContent = 'Resolve';
@@ -110,15 +125,15 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-applyFilters.addEventListener('click', loadAlerts);
-refreshBtn.addEventListener('click', loadAlerts);
-severityFilter.addEventListener('change', loadAlerts);
+applyFilters.addEventListener('click', () => loadAlerts());
+refreshBtn.addEventListener('click', () => loadAlerts());
+severityFilter.addEventListener('change', () => loadAlerts());
 apiNameFilter.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') loadAlerts();
 });
 
 loadAlerts();
-refreshTimer = setInterval(loadAlerts, REFRESH_MS);
+refreshTimer = setInterval(() => loadAlerts({ background: true }), REFRESH_MS);
 window.addEventListener('beforeunload', () => {
   if (refreshTimer) clearInterval(refreshTimer);
 });
