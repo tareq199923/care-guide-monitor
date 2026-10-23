@@ -12,7 +12,7 @@ alerts. Read this file and PROGRESS.md at the start of every session.
 - Expose active anomalies (GET /alerts) and show them in a clean frontend
 
 ## Stack
-- Node.js 18+ (CommonJS), Express
+- Node.js 20.19+ (CommonJS), Express
 - MongoDB with Mongoose
 - LLM through the `openai` package against any OpenAI-compatible provider.
   Configured only by env vars: LLM_BASE_URL, LLM_API_KEY, LLM_MODEL
@@ -77,9 +77,9 @@ createdAt, resolvedAt.
 
 ## Decisions
 - Invalid batch items: return 400 only when the body is not a non-empty
-  array or an item has no usable api_name. Items with bad or missing
-  numeric fields still produce INVALID_DATA alerts, and the response
-  includes an errors summary.
+  array or an item has no usable api_name (non-empty, at most 200
+  characters). Items with bad or missing numeric fields still produce
+  INVALID_DATA alerts, and the response includes an errors summary.
 - Consecutive failures live in the ApiState collection, one document per
   api_name, updated atomically.
 - The LLM is called only when a new alert is created. Updates to an active

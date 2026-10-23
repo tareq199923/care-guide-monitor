@@ -4,15 +4,34 @@ Intelligent API monitoring and alert system. It receives batches of API check
 results, detects anomalies, writes a human-readable alert, and stores it in
 MongoDB.
 
+## Architecture
+
+| Layer | Location | Responsibility |
+| --- | --- | --- |
+| HTTP entry | `src/server.js`, `src/app.js` | Connect to MongoDB, start Express, mount middleware and routes |
+| Routes | `src/routes/` | Endpoint definitions only |
+| Controllers | `src/controllers/` | Thin request/response handlers |
+| Services | `src/services/` | Detector, alert policy, AI writer, batch processing |
+| Models | `src/models/` | Mongoose schemas and indexes |
+| Middleware | `src/middleware/` | Batch validation, request logging, central errors |
+| Config | `src/config/` | Environment loading and thresholds |
+| Utilities | `src/utils/` | Logger, `AppError`, fallback messages |
+| Frontend | `frontend/` | Plain HTML/CSS/JS dashboard served by Express |
+| Tests | `tests/` | Jest and supertest suites using an in-memory MongoDB |
+
 ## Development
 
-Requirements: Node.js 18+, npm, and a MongoDB connection (Atlas or local).
+Requirements: Node.js 20.19+, npm, and a MongoDB connection (Atlas or local).
+The minimum Node version is set by Mongoose 9, ESLint 10, and
+`mongodb-memory-server` 11.
 
 ```bash
 npm install
 cp .env.example .env
 npm run dev
 ```
+
+On Windows PowerShell, use `Copy-Item .env.example .env` instead of `cp`.
 
 ### Scripts
 
@@ -90,6 +109,10 @@ synchronously in chunks of `LLM_CONCURRENCY` (5), and one failed item does
 not stop the rest of the batch. Multiple checks for the same API are safe:
 state counters and alert occurrences use atomic updates.
 
+Batch validation is all-or-nothing: if any item is invalid, the whole request
+is rejected. Once a batch is accepted, item-level processing failures are
+collected in `errors` and do not stop the other items.
+
 A `400` is returned when the body is not a non-empty array or an item has no
 usable `api_name` (non-empty and at most 200 characters). Every bad item is
 listed in `details`:
@@ -106,7 +129,7 @@ Wrong or missing metric fields are accepted by validation and produce an
 
 ## GET /alerts
 
-Returns active alerts, newest first.
+Returns active alerts sorted by creation time, newest first.
 
 ```http
 GET /alerts
@@ -169,8 +192,9 @@ an unknown id returns 404.
 
 `Alert` stores `api_name`, `type`, `severity`, `status`, `message`,
 `aiGenerated`, `consecutiveFailures`, `occurrences`, a `sourceData`
-snapshot, `lastSeenAt`, `resolvedAt`, and timestamps. A partial unique
-index enforces one active alert per API and anomaly type.
+snapshot, `lastSeenAt`, `resolvedAt`, and timestamps. `api_name` is limited
+to 200 characters and messages to 500. A partial unique index enforces one
+active alert per API and anomaly type.
 
 `ApiState` stores one document per API with its consecutive failure count
 and last observed status. It survives restarts and is updated atomically.
@@ -182,7 +206,7 @@ Thresholds live in `src/config/thresholds.js`.
 | Type | Condition | Severity |
 | --- | --- | --- |
 | `HIGH_RESPONSE_TIME` | `response_time_ms` above 3000 | warning |
-| `FAILED_REQUEST` | `status_code` 400 or above | warning for 4xx, critical for 5xx |
+| `FAILED_REQUEST` | `status_code` 400 or above | warning for 4xx, critical for 5xx; 4xx becomes critical after 3 consecutive failures |
 | `NO_RECORDS` | successful request (`status_code` below 400) with `records_returned` equal to 0 | warning |
 | `INVALID_DATA` | wrong types or missing required fields | warning |
 | `REPEATED_FAILURE` | 3 or more consecutive failed checks for an API | critical |
@@ -220,7 +244,40 @@ The dashboard is served by Express at `/`. It lists active alerts, supports
 severity and API-name filters, resolves alerts, and refreshes every 30
 seconds without hiding the current rows. No separate build step is required.
 
+## Design decisions
+
+- The detector is a pure function. It takes one check result and returns
+  anomalies without touching MongoDB, the LLM, or HTTP.
+- Consecutive failures live in `ApiState`, one document per `api_name`, so
+  the count survives restarts and is updated atomically.
+- A partial unique index allows one active alert per `api_name` and `type`.
+  Repeated occurrences update that alert instead of creating duplicates.
+- Severity only escalates while an alert is active.
+- The LLM is called only when a new alert is created. It is retried once,
+  then replaced by a deterministic template with `aiGenerated: false`.
+- `POST /monitor` is synchronous, returns a summary, and limits LLM calls to
+  five concurrent requests.
+- `NO_RECORDS` only applies to successful requests. A failed request with zero
+  records produces `FAILED_REQUEST` only.
+- `GET /alerts` returns active alerts only, with severity and API-name
+  filters. There is no pagination.
+- Express serves the frontend from the same origin, so CORS is not enabled.
+- Email notifications are out of scope.
+
+## Sample data
+
+`sample-data.json` is a valid array for `POST /monitor`. The `label` fields
+are for readability and are ignored by validation. It covers a healthy check,
+slow response, 4xx, 5xx, zero records, invalid metric fields, and three
+consecutive failures for one API.
+
+```bash
+curl -X POST http://localhost:3000/monitor \
+  -H "Content-Type: application/json" \
+  --data @sample-data.json
+```
+
 ## Status
 
-The application is under construction. Features are tracked in
-`feature_list.json` and progress is tracked in `PROGRESS.md`.
+The MVP is complete. Features are tracked in `feature_list.json` and progress
+is tracked in `PROGRESS.md`.

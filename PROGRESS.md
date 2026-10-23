@@ -34,7 +34,8 @@ Last updated: 2026-10-23
   occurrence updates atomic
 - Review fix: background dashboard refreshes no longer hide the current rows,
   and stale responses are ignored
+- Review fix: README architecture table, design decisions, Node 20.19
+  requirement, corrected detection docs, and a directly usable sample batch
 
 ## Next
-- Final docs cleanup, record the 5–10 minute video, and convert
-  AI_Prompts.md to AI_Prompts.docx
+- Record the 5–10 minute video and convert AI_Prompts.md to AI_Prompts.docx

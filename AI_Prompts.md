@@ -1,7 +1,8 @@
 # AI Prompts Used
 
 Tools: Claude Code (VS Code CLI) for planning and code generation,
-Claude chat (claude.ai) for planning help and plan review.
+Claude chat (claude.ai) for planning help and plan review, and OpenCode
+for the follow-up review and fixes.
 Prompts are listed in the order I used them.
 
 ---
@@ -113,4 +114,29 @@ only the relevant fields: `response_time_ms`, `status_code`,
 `records_returned`, `threshold_ms`, `issues`, and `consecutive_failures`.
 
 If the LLM fails twice or is not configured, `src/utils/fallbackMessages.js`
-writes a deterministic message and `aiGenerated` is false.
+writes a deterministic message and `aiGenerated` is false. Both AI and
+fallback messages are capped at 500 characters.
+
+---
+
+## Part 4: Follow-up review and fixes
+
+Tool: OpenCode
+
+### Prompt 5: Review the remaining work
+Date: 23 Oct 2026
+Result: reviewed commits 9 and 10 plus the in-memory dev script; found
+documentation, test-coverage, and alert-reliability gaps
+
+```
+i have done the remainig work where u left off kindly review it.
+```
+
+### Prompt 6: Build the review fixes
+Date: 23 Oct 2026
+Result: bounded alert input/messages, added static-frontend and duplicate-check
+tests, fixed refresh flicker, and updated docs and sample data
+
+```
+lets think step by step and start building
+```

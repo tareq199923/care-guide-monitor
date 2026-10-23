@@ -35,24 +35,30 @@
     "records_returned": 0
   },
   {
-    "label": "invalid data (missing fields)",
+    "label": "invalid metric fields",
     "api_name": "Inventory API",
     "response_time_ms": "fast",
     "status_code": 200
   },
   {
-    "label": "invalid data (empty api_name)",
-    "api_name": "",
+    "label": "repeated failure (1 of 3)",
+    "api_name": "Reports API",
     "response_time_ms": 100,
-    "status_code": 200,
-    "records_returned": 5
+    "status_code": 500,
+    "records_returned": 0
   },
   {
-    "label": "mixed batch",
-    "batch": [
-      { "api_name": "Users API", "response_time_ms": 90, "status_code": 200, "records_returned": 40 },
-      { "api_name": "Payments API", "response_time_ms": 3100, "status_code": 200, "records_returned": 10 },
-      { "api_name": "Payments API", "response_time_ms": 50, "status_code": 500, "records_returned": 0 }
-    ]
+    "label": "repeated failure (2 of 3)",
+    "api_name": "Reports API",
+    "response_time_ms": 100,
+    "status_code": 500,
+    "records_returned": 0
+  },
+  {
+    "label": "repeated failure (3 of 3)",
+    "api_name": "Reports API",
+    "response_time_ms": 100,
+    "status_code": 500,
+    "records_returned": 0
   }
 ]
