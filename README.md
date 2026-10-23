@@ -55,6 +55,7 @@ Copy `.env.example` to `.env` and fill in the values:
 | --- | --- | --- |
 | `PORT` | `3000` | HTTP port |
 | `MONGODB_URI` | required | MongoDB connection string |
+| `DNS_SERVERS` | empty | Comma-separated DNS resolvers for Node (e.g. `8.8.8.8,1.1.1.1`); empty uses the system resolver |
 | `LLM_BASE_URL` | empty | OpenAI-compatible API base URL |
 | `LLM_API_KEY` | empty | API key for the LLM provider |
 | `LLM_MODEL` | empty | Model name |

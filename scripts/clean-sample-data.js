@@ -5,10 +5,8 @@
  *
  * Usage: node scripts/clean-sample-data.js
  */
-const dns = require('node:dns');
-// DNS workaround for this machine: node's resolver can't reach the default
-// DNS server to resolve the Atlas SRV record. Point it at LAN + Google DNS.
-dns.setServers(['192.168.0.1', '8.8.8.8']);
+const { applyDnsOverride } = require('../src/config/dns');
+applyDnsOverride();
 
 const path = require('path');
 const dotenv = require('dotenv');
