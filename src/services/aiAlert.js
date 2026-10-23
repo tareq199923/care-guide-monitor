@@ -2,7 +2,10 @@ const OpenAI = require('openai');
 const env = require('../config/env');
 const thresholds = require('../config/thresholds');
 const logger = require('../utils/logger');
-const { buildFallbackMessage } = require('../utils/fallbackMessages');
+const {
+  buildFallbackMessage,
+  truncateMessage,
+} = require('../utils/fallbackMessages');
 
 const SYSTEM_PROMPT = `You are an on-call monitoring assistant. Write one short alert message for an engineer about an API health check.
 
@@ -77,11 +80,7 @@ function cleanMessage(rawMessage) {
     .replace(/^["'`]+|["'`]+$/g, '')
     .trim();
 
-  if (message.length <= thresholds.MESSAGE_MAX_LENGTH) {
-    return message;
-  }
-
-  return `${message.slice(0, thresholds.MESSAGE_MAX_LENGTH - 3).trimEnd()}...`;
+  return truncateMessage(message);
 }
 
 async function generateMessage(item, anomaly, context = {}) {

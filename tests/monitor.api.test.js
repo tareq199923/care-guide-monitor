@@ -138,6 +138,24 @@ describe('POST /monitor', () => {
     await expect(Alert.countDocuments()).resolves.toBe(0);
   });
 
+  it('rejects a batch when an api_name is too long', async () => {
+    const response = await request(app)
+      .post('/monitor')
+      .send([{
+        api_name: 'x'.repeat(201),
+        response_time_ms: 120,
+        status_code: 200,
+        records_returned: 50,
+      }])
+      .expect(400);
+
+    expect(response.body.error).toBe('Validation failed');
+    expect(response.body.details).toEqual([
+      { index: 0, message: 'api_name must be 200 characters or fewer' },
+    ]);
+    await expect(Alert.countDocuments()).resolves.toBe(0);
+  });
+
   it('rejects a body that is not a non-empty array', async () => {
     const response = await request(app)
       .post('/monitor')

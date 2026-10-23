@@ -5,5 +5,6 @@ module.exports = Object.freeze({
   REPEATED_FAILURE_COUNT: 3,
   LLM_MAX_ATTEMPTS: 2,
   LLM_CONCURRENCY: 5,
+  API_NAME_MAX_LENGTH: 200,
   MESSAGE_MAX_LENGTH: 500,
 });

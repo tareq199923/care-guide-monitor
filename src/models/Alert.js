@@ -20,7 +20,12 @@ const sourceDataSchema = new mongoose.Schema({
 }, { _id: false });
 
 const alertSchema = new mongoose.Schema({
-  api_name: { type: String, required: true, trim: true },
+  api_name: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: thresholds.API_NAME_MAX_LENGTH,
+  },
   type: { type: String, required: true, enum: ANOMALY_TYPES },
   severity: { type: String, required: true, enum: SEVERITIES },
   status: { type: String, enum: STATUSES, default: 'active' },

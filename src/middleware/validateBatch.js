@@ -1,4 +1,5 @@
 const AppError = require('../utils/AppError');
+const thresholds = require('../config/thresholds');
 
 module.exports = function validateBatch(req, res, next) {
   if (!Array.isArray(req.body) || req.body.length === 0) {
@@ -15,7 +16,9 @@ module.exports = function validateBatch(req, res, next) {
       return null;
     }
 
-    if (typeof item.api_name !== 'string' || item.api_name.trim() === '') {
+    const apiName = typeof item.api_name === 'string' ? item.api_name.trim() : '';
+
+    if (apiName === '') {
       details.push({
         index,
         message: 'api_name must be a non-empty string',
@@ -23,7 +26,15 @@ module.exports = function validateBatch(req, res, next) {
       return null;
     }
 
-    return { ...item, api_name: item.api_name.trim() };
+    if (apiName.length > thresholds.API_NAME_MAX_LENGTH) {
+      details.push({
+        index,
+        message: `api_name must be ${thresholds.API_NAME_MAX_LENGTH} characters or fewer`,
+      });
+      return null;
+    }
+
+    return { ...item, api_name: apiName };
   });
 
   if (details.length > 0) {

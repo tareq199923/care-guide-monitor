@@ -205,4 +205,18 @@ describe('fallback messages', () => {
       'Payments API has failed 3 consecutive checks (last HTTP 503).',
     );
   });
+
+  it('caps a long fallback message at 500 characters', () => {
+    const message = buildFallbackMessage(
+      {
+        api_name: 'A'.repeat(600),
+        status_code: 500,
+        records_returned: 0,
+      },
+      { type: 'FAILED_REQUEST' },
+    );
+
+    expect(message).toHaveLength(500);
+    expect(message.endsWith('...')).toBe(true);
+  });
 });

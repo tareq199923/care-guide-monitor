@@ -27,7 +27,10 @@ Last updated: 2026-10-23
   30-second auto-refresh served by Express
 - Commit 10: final documentation, sample data, prompt log, and CLAUDE.md
   reconciliation
+- Review fix: capped `api_name` at 200 characters and fallback messages at
+  500 characters, with regression tests
 
 ## Next
-- All 10 commits complete. Remaining deliverables: push to GitHub, record the
-  5–10 minute video, and convert AI_Prompts.md to AI_Prompts.docx.
+- Add a static-frontend test and harden duplicate checks in one batch
+- Final docs cleanup, record the 5–10 minute video, and convert
+  AI_Prompts.md to AI_Prompts.docx

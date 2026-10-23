@@ -61,6 +61,14 @@ describe('Alert model', () => {
     expect(error.errors.message).toBeDefined();
   });
 
+  it('rejects an api_name longer than the limit', async () => {
+    const error = await getValidationError(validAlert({
+      api_name: 'x'.repeat(201),
+    }));
+
+    expect(error.errors.api_name).toBeDefined();
+  });
+
   it('supports every anomaly type', async () => {
     for (const type of ANOMALY_TYPES) {
       await expect(validAlert({ type }).validate()).resolves.toBeUndefined();

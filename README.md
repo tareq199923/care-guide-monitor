@@ -90,7 +90,8 @@ synchronously in chunks of `LLM_CONCURRENCY` (5), and one failed item does
 not stop the rest of the batch.
 
 A `400` is returned when the body is not a non-empty array or an item has no
-usable `api_name`. Every bad item is listed in `details`:
+usable `api_name` (non-empty and at most 200 characters). Every bad item is
+listed in `details`:
 
 ```json
 {
@@ -209,8 +210,8 @@ includes the API name, anomaly type, severity, and the relevant check values
 The LLM is called only when a new alert is created. Each call is retried
 once, then `src/utils/fallbackMessages.js` produces a deterministic message
 with `aiGenerated` set to false. If the LLM settings are missing, the
-fallback is used directly. The exact prompts are recorded in
-`AI_Prompts.md`.
+fallback is used directly. AI and fallback messages are capped at 500
+characters. The exact prompts are recorded in `AI_Prompts.md`.
 
 ## Frontend dashboard
 
