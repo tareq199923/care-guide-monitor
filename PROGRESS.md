@@ -30,8 +30,9 @@ Last updated: 2026-10-23
 - Review fix: capped `api_name` at 200 characters and fallback messages at
   500 characters, with regression tests
 - Review fix: added static-frontend serving tests for `/` and `/app.js`
+- Review fix: retried ApiState upserts on duplicate keys and made alert
+  occurrence updates atomic
 
 ## Next
-- Harden duplicate checks in one batch
 - Final docs cleanup, record the 5–10 minute video, and convert
   AI_Prompts.md to AI_Prompts.docx

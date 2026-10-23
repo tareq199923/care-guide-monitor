@@ -87,7 +87,8 @@ It returns the batch summary:
 
 `created` and `updated` count alerts, not check results. Processing runs
 synchronously in chunks of `LLM_CONCURRENCY` (5), and one failed item does
-not stop the rest of the batch.
+not stop the rest of the batch. Multiple checks for the same API are safe:
+state counters and alert occurrences use atomic updates.
 
 A `400` is returned when the body is not a non-empty array or an item has no
 usable `api_name` (non-empty and at most 200 characters). Every bad item is

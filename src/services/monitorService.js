@@ -8,7 +8,7 @@ function isValidStatus(code) {
   return Number.isInteger(code) && code >= 100 && code <= 599;
 }
 
-async function updateApiState(item) {
+async function updateApiState(item, retries = 1) {
   const statusValid = isValidStatus(item.status_code);
   const isFailure = statusValid && item.status_code >= thresholds.FAILED_STATUS_MIN;
   const isSuccess = statusValid && item.status_code < thresholds.FAILED_STATUS_MIN;
@@ -29,11 +29,20 @@ async function updateApiState(item) {
     update.$set.consecutiveFailures = 0;
   }
 
-  return ApiState.findOneAndUpdate(
-    { api_name: item.api_name },
-    update,
-    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
-  );
+  try {
+    return await ApiState.findOneAndUpdate(
+      { api_name: item.api_name },
+      update,
+      { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+    );
+  } catch (error) {
+    // Two checks for a new API can race on the unique api_name index.
+    // The retry updates the document the other request inserted.
+    if (error.code === 11000 && retries > 0) {
+      return updateApiState(item, retries - 1);
+    }
+    throw error;
+  }
 }
 
 async function processItem(item, index) {

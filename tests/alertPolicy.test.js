@@ -80,6 +80,23 @@ describe('recordAnomaly', () => {
     await expect(Alert.countDocuments()).resolves.toBe(1);
   });
 
+  it('increments occurrences atomically for concurrent updates', async () => {
+    await recordAnomaly(item, failedRequest, { consecutiveFailures: 1 });
+
+    await Promise.all([
+      recordAnomaly(item, failedRequest, { consecutiveFailures: 2 }),
+      recordAnomaly(item, failedRequest, { consecutiveFailures: 3 }),
+    ]);
+
+    const alert = await Alert.findOne({
+      api_name: item.api_name,
+      type: failedRequest.type,
+    }).lean();
+
+    expect(alert.occurrences).toBe(3);
+    expect(aiAlert.generateMessage).toHaveBeenCalledTimes(1);
+  });
+
   it('escalates severity but never downgrades it', async () => {
     await recordAnomaly(
       { ...item, status_code: 404 },

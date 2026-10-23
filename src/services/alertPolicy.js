@@ -23,18 +23,26 @@ function normalizeFailureCount(context) {
 }
 
 async function updateExistingAlert(existing, item, anomaly, context) {
-  const severity = existing.severity === 'critical' || anomaly.severity === 'critical'
-    ? 'critical'
-    : 'warning';
+  const update = {
+    $set: {
+      consecutiveFailures: normalizeFailureCount(context),
+      sourceData: buildSourceData(item, anomaly),
+      lastSeenAt: new Date(),
+    },
+    $inc: { occurrences: 1 },
+  };
 
-  existing.severity = severity;
-  existing.consecutiveFailures = normalizeFailureCount(context);
-  existing.sourceData = buildSourceData(item, anomaly);
-  existing.lastSeenAt = new Date();
-  existing.occurrences = (existing.occurrences || 1) + 1;
+  if (existing.severity === 'critical' || anomaly.severity === 'critical') {
+    update.$set.severity = 'critical';
+  }
 
-  await existing.save();
-  return existing;
+  const alert = await Alert.findOneAndUpdate(
+    { _id: existing._id, status: 'active' },
+    update,
+    { returnDocument: 'after' },
+  );
+
+  return alert || existing;
 }
 
 async function recordAnomaly(item, anomaly, context = {}) {

@@ -211,6 +211,38 @@ describe('POST /monitor', () => {
     expect(resetState.consecutiveFailures).toBe(0);
   });
 
+  it('handles multiple checks for the same new API in one batch', async () => {
+    const failing = {
+      api_name: 'Repeat API',
+      response_time_ms: 100,
+      status_code: 500,
+      records_returned: 0,
+    };
+
+    const response = await request(app)
+      .post('/monitor')
+      .send([failing, failing, failing])
+      .expect(200);
+
+    expect(response.body).toEqual({
+      received: 3,
+      processed: 3,
+      created: 2,
+      updated: 2,
+      errors: [],
+    });
+
+    const state = await ApiState.findOne({ api_name: 'Repeat API' }).lean();
+    expect(state.consecutiveFailures).toBe(3);
+
+    const failed = await Alert.findOne({
+      api_name: 'Repeat API',
+      type: 'FAILED_REQUEST',
+    }).lean();
+    expect(failed.occurrences).toBe(3);
+    expect(failed.severity).toBe('critical');
+  });
+
   it('limits concurrent LLM calls to five', async () => {
     let active = 0;
     let maxActive = 0;
