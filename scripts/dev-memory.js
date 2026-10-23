@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 (async () => {

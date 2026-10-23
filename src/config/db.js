@@ -21,7 +21,8 @@ async function connectMongo(uri = env.MONGODB_URI) {
         `Could not resolve/reach MongoDB Atlas host. ` +
         `Check your network connection, ensure the Atlas IP allowlist permits this machine, ` +
         `and that DNS can resolve ${uri.split('@').pop().split('?')[0]}. ` +
-        `Original error: ${error.message}`
+        `Original error: ${error.message}`,
+        { cause: error }
       );
     }
     throw error;
