@@ -11,7 +11,22 @@ async function connectMongo(uri = env.MONGODB_URI) {
     logger.error('MongoDB connection error', { message: error.message });
   });
 
-  await mongoose.connect(uri);
+  try {
+    await mongoose.connect(uri);
+  } catch (error) {
+    // Surface the DNS / network cause with an actionable hint so the user is
+    // not left with a bare `querySrv ECONNREFUSED`.
+    if (error && (error.message.includes('querySrv') || error.code === 'ECONNREFUSED' || error.code === 'EAI_AGAIN')) {
+      throw new Error(
+        `Could not resolve/reach MongoDB Atlas host. ` +
+        `Check your network connection, ensure the Atlas IP allowlist permits this machine, ` +
+        `and that DNS can resolve ${uri.split('@').pop().split('?')[0]}. ` +
+        `Original error: ${error.message}`
+      );
+    }
+    throw error;
+  }
+
   logger.info('MongoDB connected', {
     host: mongoose.connection.host,
     database: mongoose.connection.name,
