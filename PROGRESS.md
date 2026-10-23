@@ -36,6 +36,8 @@ Last updated: 2026-10-23
   and stale responses are ignored
 - Review fix: README architecture table, design decisions, Node 20.19
   requirement, corrected detection docs, and a directly usable sample batch
+- Review chore: removed the unused `cors` dependency and added an error
+  handler to the in-memory development script
 
 ## Next
 - Record the 5–10 minute video and convert AI_Prompts.md to AI_Prompts.docx

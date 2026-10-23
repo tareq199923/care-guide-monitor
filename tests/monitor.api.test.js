@@ -7,6 +7,7 @@ const {
 const { Alert } = require('../src/models/Alert');
 const { ApiState } = require('../src/models/ApiState');
 const aiAlert = require('../src/services/aiAlert');
+const sampleData = require('../sample-data.json');
 
 jest.mock('../src/services/aiAlert', () => ({
   generateMessage: jest.fn(),
@@ -241,6 +242,24 @@ describe('POST /monitor', () => {
     }).lean();
     expect(failed.occurrences).toBe(3);
     expect(failed.severity).toBe('critical');
+  });
+
+  it('accepts the checked-in sample data batch', async () => {
+    const response = await request(app)
+      .post('/monitor')
+      .send(sampleData)
+      .expect(200);
+
+    expect(response.body.received).toBe(sampleData.length);
+    expect(response.body.processed).toBe(sampleData.length);
+    expect(response.body.errors).toEqual([]);
+
+    const repeated = await Alert.findOne({
+      api_name: 'Reports API',
+      type: 'REPEATED_FAILURE',
+    }).lean();
+    expect(repeated).toBeDefined();
+    expect(repeated.consecutiveFailures).toBe(3);
   });
 
   it('limits concurrent LLM calls to five', async () => {

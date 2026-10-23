@@ -15,4 +15,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
     process.exit(0);
   });
   require('../src/server');
-})();
+})().catch((error) => {
+  console.error('Failed to start the in-memory development database', error);
+  process.exit(1);
+});
