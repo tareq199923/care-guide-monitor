@@ -7,6 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "dev:memory": "node scripts/dev-memory.js",
+    "db:clean": "node scripts/clean-sample-data.js",
     "lint": "eslint .",
     "test": "jest --runInBand",
     "check": "npm run lint && npm test"

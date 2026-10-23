@@ -27,9 +27,8 @@ async function main() {
   const db = mongoose.connection.db;
   const alertRes = await db.collection('alerts').deleteMany({});
   const stateRes = await db.collection('apistates').deleteMany({});
-  const configRes = await db.collection('apiconfigs').deleteMany({});
 
-  console.log(`Deleted: ${alertRes.deletedCount} alerts, ${stateRes.deletedCount} API states, ${configRes.deletedCount} API configs`);
+  console.log(`Deleted: ${alertRes.deletedCount} alerts, ${stateRes.deletedCount} API states`);
   await mongoose.disconnect();
   console.log('Done — database is clean.');
 }

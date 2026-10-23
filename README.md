@@ -39,6 +39,8 @@ On Windows PowerShell, use `Copy-Item .env.example .env` instead of `cp`.
 - `npm run dev` starts the server with nodemon.
 - `npm run dev:memory` starts the server with an in-memory MongoDB (no Atlas
   needed, useful for local testing).
+- `npm run db:clean` resets demo data (deletes all alerts and API failure
+  counters), for demos only.
 - `npm run lint` runs ESLint.
 - `npm test` runs Jest.
 - `npm run check` runs lint and then the test suite. This must pass before a
