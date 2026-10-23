@@ -97,6 +97,19 @@ describe('recordAnomaly', () => {
     expect(aiAlert.generateMessage).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps the highest consecutiveFailures when a lower update follows', async () => {
+    await recordAnomaly(item, failedRequest, { consecutiveFailures: 1 });
+    await recordAnomaly(item, failedRequest, { consecutiveFailures: 3 });
+    await recordAnomaly(item, failedRequest, { consecutiveFailures: 1 });
+
+    const alert = await Alert.findOne({
+      api_name: item.api_name,
+      type: failedRequest.type,
+    }).lean();
+
+    expect(alert.consecutiveFailures).toBe(3);
+  });
+
   it('escalates severity but never downgrades it', async () => {
     await recordAnomaly(
       { ...item, status_code: 404 },

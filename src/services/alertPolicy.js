@@ -23,14 +23,18 @@ function normalizeFailureCount(context) {
 }
 
 async function updateExistingAlert(existing, item, anomaly, context) {
+  const failureCount = normalizeFailureCount(context);
   const update = {
     $set: {
-      consecutiveFailures: normalizeFailureCount(context),
       sourceData: buildSourceData(item, anomaly),
       lastSeenAt: new Date(),
     },
     $inc: { occurrences: 1 },
   };
+
+  if (failureCount > 0) {
+    update.$max = { consecutiveFailures: failureCount };
+  }
 
   if (existing.severity === 'critical' || anomaly.severity === 'critical') {
     update.$set.severity = 'critical';
