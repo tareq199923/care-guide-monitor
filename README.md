@@ -281,11 +281,28 @@ are for readability and are ignored by validation. It covers a healthy check,
 slow response, 4xx, 5xx, zero records, invalid metric fields, and three
 consecutive failures for one API.
 
+`sample-assignment.json` contains the two example items from the assignment
+brief (a 1200 ms PatientDataAPI response and a 5500 ms AppointmentAPI
+response). Use it to reproduce the exact demo scenario from the brief.
+
+### bash / Git Bash
+
 ```bash
 curl -X POST http://localhost:3000/monitor \
   -H "Content-Type: application/json" \
   --data @sample-data.json
 ```
+
+### PowerShell (Windows)
+
+```powershell
+curl.exe -X POST http://localhost:3000/monitor -H "Content-Type: application/json" --data "@sample-data.json"
+Invoke-RestMethod http://localhost:3000/alerts
+```
+
+> On Windows, use `curl.exe` (not the `curl` alias for
+> `Invoke-WebRequest`). Use `curl.exe` for `sample-assignment.json` the same
+> way.
 
 ## Status
 
