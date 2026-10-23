@@ -151,3 +151,77 @@ Result: switched to `max_completion_tokens`, added optional
 ```
 go with option b
 ```
+
+---
+
+## Part 5: Cleanup and hardening
+
+Tool: Claude Code
+
+### Prompt 8: Lint, DNS, scripts, and docs cleanup
+Date: 24 Oct 2026
+Result: attached original error as `cause` in `db.js`; allowed `no-console`
+in `scripts/`; replaced hard-coded `dns.setServers` with a shared
+`DNS_SERVERS` env-var helper (`src/config/dns.js`, tested, documented);
+removed the non-existent `apiconfigs` deletion and added `npm run db:clean`;
+added PowerShell sample commands to the README and created
+`sample-assignment.json` with the two assignment-brief examples.
+All changes landed as four focused commits, each gated by a passing
+`npm run check`.
+
+```
+Fix these in order, one small commit each. Run npm run check before every
+commit; it must pass (lint and tests).
+
+1. fix(lint): in src/config/db.js attach the original error as the cause
+   when rethrowing (new Error(message, { cause: error })). In
+   eslint.config.js allow console only for files under scripts/ (CLI
+   tools). Do not change any other lint rules.
+
+2. fix(dns): remove every hard-coded dns.setServers call, in
+   src/server.js AND scripts/clean-sample-data.js. Add a small shared
+   helper (src/config/dns.js) that reads an optional DNS_SERVERS env var
+   (comma-separated, e.g. 8.8.8.8,1.1.1.1) and calls dns.setServers
+   only when it is set; default is the system DNS. Use it in both
+   places. Add DNS_SERVERS (empty) to .env.example, document it in the
+   README config table, and add a test for the parsing.
+
+3. chore(scripts): in scripts/clean-sample-data.js remove the apiconfigs
+   line (that collection does not exist in this app) and only delete the
+   alerts and apistates collections. Add an npm script "db:clean" and
+   document it in the README as "resets demo data (deletes all alerts and
+   API failure counters), for demos only".
+
+4. docs: in the README Sample data section add a PowerShell example
+   (curl.exe -X POST http://localhost:3000/monitor -H "Content-Type:
+   application/json" --data "@sample-data.json" and
+   Invoke-RestMethod http://localhost:3000/alerts). Add
+   sample-assignment.json with the two example items from the assignment
+   brief (PatientDataAPI 1200 ms / 200 / 50 records, AppointmentAPI
+   5500 ms / 500 / 0 records) and mention it in the README.
+
+Then update PROGRESS.md and AI_Prompts.md (add this as a prompt entry
+with its result).
+```
+
+### Prompt 9: Fix DNS override order and sample label
+Date: 24 Oct 2026
+Result: `src/config/dns.js` now loads dotenv itself so `DNS_SERVERS` from
+`.env` works even when called before `env.js`; regression test spawns a
+child process with a temp `.env`; `sample-assignment.json` PatientDataAPI
+label corrected from "slow response" to "healthy".
+
+```
+Bug: DNS_SERVERS from .env is ignored because applyDnsOverride() runs
+before dotenv loads (server.js calls it first; env.js loads dotenv later;
+clean-sample-data.js has the same order). Fix: in src/config/dns.js load
+dotenv at the top (require('dotenv').config({ quiet: true })) so
+applyDnsOverride works wherever it is called. Add a test that proves it:
+write a temp .env file in a temp working directory containing DNS_SERVERS,
+spawn a node child process that requires dns.js, calls applyDnsOverride
+and prints dns.getServers(), and assert the output. Also fix the label in
+sample-assignment.json: the PatientDataAPI item (1200 ms, 200, 50 records)
+is healthy, not "slow response". Run npm run check, commit as
+"fix(dns): load .env before applying DNS override", and update PROGRESS.md
+and AI_Prompts.md (Prompt 9).
+```

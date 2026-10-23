@@ -1,6 +1,6 @@
 [
   {
-    "label": "PatientDataAPI — slow response (1200 ms, 200, 50 records)",
+    "label": "PatientDataAPI — healthy (1200 ms, 200, 50 records)",
     "api_name": "PatientDataAPI",
     "response_time_ms": 1200,
     "status_code": 200,

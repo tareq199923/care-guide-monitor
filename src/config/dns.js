@@ -11,6 +11,10 @@
  *   require('../config/dns').applyDnsOverride();
  */
 const dns = require('node:dns');
+// Load .env here, not in the caller: this module must be usable before
+// env.js loads dotenv, so it loads dotenv itself. `quiet: true` keeps
+// dotenv silent; a missing .env is not an error.
+require('dotenv').config({ quiet: true });
 
 /**
  * Read the `DNS_SERVERS` env var (a comma-separated IP list, optionally

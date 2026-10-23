@@ -56,3 +56,51 @@ describe('dns.applyDnsOverride', () => {
     expect(dns.setServers).not.toHaveBeenCalled();
   });
 });
+
+// Regression test: dns.js must load .env itself so that DNS_SERVERS set in
+// .env is honored even when applyDnsOverride() is called before env.js runs.
+describe('dns.applyDnsOverride loads .env itself', () => {
+  test('reads DNS_SERVERS from a temp .env file', () => {
+    const fs = require('node:fs');
+    const os = require('node:os');
+    const path = require('node:path');
+    const { spawnSync } = require('node:child_process');
+
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dns-env-test-'));
+    fs.writeFileSync(path.join(tmpDir, '.env'), 'DNS_SERVERS=9.9.9.9,149.112.112.112\n');
+
+    const scriptPath = path.resolve(__dirname, '../src/config/dns.js');
+
+    // Strip DNS_SERVERS from the inherited env so only the temp .env can set it.
+    const childEnv = { ...process.env };
+    delete childEnv.DNS_SERVERS;
+    childEnv.DNS_TEST_MODULE = scriptPath;
+
+    const child = spawnSync(
+      process.execPath,
+      [
+        '--input-type=commonjs',
+        '-e',
+        [
+          "const dns = require('node:dns');",
+          'const { applyDnsOverride } = require(process.env.DNS_TEST_MODULE);',
+          'const ok = applyDnsOverride();',
+          "console.log(JSON.stringify(dns.getServers()) + ' ' + ok);",
+        ].join(''),
+      ],
+      { cwd: tmpDir, encoding: 'utf8', env: childEnv }
+    );
+
+    expect(child.status).toBe(0);
+    const output = child.stdout.trim();
+    // Output format: <JSON-array> <true|false>
+    const lastSpace = output.lastIndexOf(' ');
+    const servers = JSON.parse(output.slice(0, lastSpace));
+    const applied = output.slice(lastSpace + 1);
+
+    expect(applied).toBe('true');
+    expect(servers).toEqual(['9.9.9.9', '149.112.112.112']);
+
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+});

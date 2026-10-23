@@ -40,6 +40,21 @@ Last updated: 2026-10-23
   handler to the in-memory development script
 - Fix: reasoning-model LLM requests now use a 1024-token completion budget,
   optional `reasoning_effort`, and temperature 0.6
+- Fix: `db.js` rethrow attaches the original error as `cause` for better
+  stack traces; `no-console` ESLint rule now allows `scripts/`
+- Fix: hard-coded `dns.setServers` removed from `server.js` and
+  `clean-sample-data.js`; replaced with `src/config/dns.js` helper driven by
+  optional `DNS_SERVERS` env var (tested, documented in README + .env.example)
+- Chore: `clean-sample-data.js` no longer deletes the non-existent
+  `apiconfigs` collection; `npm run db:clean` script added and documented
+- Docs: PowerShell sample commands added to README; `sample-assignment.json`
+  created with the two assignment-brief items (PatientDataAPI 1200 ms /
+  200 / 50 records, AppointmentAPI 5500 ms / 500 / 0 records)
+- Fix: `src/config/dns.js` now loads dotenv itself (`quiet: true`) so
+  `DNS_SERVERS` set in `.env` is honored even when `applyDnsOverride()` is
+  called before `env.js` runs; regression test spawns a child process with a
+  temp `.env` and asserts `dns.getServers()` reflects it; `sample-assignment.json`
+  PatientDataAPI label corrected from "slow response" to "healthy"
 
 ## Next
 - Re-test the Groq LLM after rotating credentials
