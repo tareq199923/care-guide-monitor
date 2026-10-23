@@ -76,6 +76,7 @@ function cleanMessage(rawMessage) {
   }
 
   const message = rawMessage
+    .replace(/[\u00a0\u202f]/g, ' ')
     .trim()
     .replace(/^["'`]+|["'`]+$/g, '')
     .trim();
@@ -99,22 +100,31 @@ async function generateMessage(item, anomaly, context = {}) {
 
   for (let attempt = 1; attempt <= thresholds.LLM_MAX_ATTEMPTS; attempt += 1) {
     try {
-      const completion = await llm.chat.completions.create({
+      const request = {
         model: env.LLM_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: prompt },
         ],
-        temperature: 0.2,
-        max_tokens: 120,
-      });
+        temperature: 0.6,
+        max_completion_tokens: env.LLM_MAX_COMPLETION_TOKENS,
+      };
 
-      const message = cleanMessage(completion.choices?.[0]?.message?.content);
+      if (env.LLM_REASONING_EFFORT) {
+        request.reasoning_effort = env.LLM_REASONING_EFFORT;
+      }
+
+      const completion = await llm.chat.completions.create(request);
+      const choice = completion.choices?.[0];
+      const message = cleanMessage(choice?.message?.content);
+
       if (message) {
         return { message, aiGenerated: true };
       }
 
-      throw new Error('LLM returned an empty message');
+      throw new Error(
+        `LLM returned an empty message (finish_reason: ${choice?.finish_reason || 'unknown'})`,
+      );
     } catch (error) {
       logger.warn('LLM alert generation failed', {
         api_name: item.api_name,

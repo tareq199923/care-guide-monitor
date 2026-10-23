@@ -95,6 +95,8 @@ createdAt, resolvedAt.
   records_returned is 0. A failed request produces FAILED_REQUEST only.
 - LLM prompts always include records_returned when it is a valid number,
   so a failed check can mention that zero records were returned.
+- LLM requests use max_completion_tokens (default 1024) and an optional
+  reasoning_effort. Reasoning models can otherwise return empty visible text.
 - At most LLM_CONCURRENCY (5) LLM calls run in parallel during a batch.
   The value lives in src/config/thresholds.js.
 - The frontend ships before the final documentation pass.

@@ -38,6 +38,9 @@ Last updated: 2026-10-23
   requirement, corrected detection docs, and a directly usable sample batch
 - Review chore: removed the unused `cors` dependency and added an error
   handler to the in-memory development script
+- Fix: reasoning-model LLM requests now use a 1024-token completion budget,
+  optional `reasoning_effort`, and temperature 0.6
 
 ## Next
+- Re-test the Groq LLM after rotating credentials
 - Record the 5–10 minute video and convert AI_Prompts.md to AI_Prompts.docx

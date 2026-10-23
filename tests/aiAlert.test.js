@@ -6,6 +6,8 @@ const mockEnv = {
   LLM_BASE_URL: 'http://llm.test/v1',
   LLM_MODEL: 'test-model',
   LLM_TIMEOUT_MS: 1000,
+  LLM_MAX_COMPLETION_TOKENS: 1024,
+  LLM_REASONING_EFFORT: 'low',
   LOG_LEVEL: 'error',
 };
 
@@ -37,6 +39,7 @@ const slowAnomaly = { type: 'HIGH_RESPONSE_TIME', severity: 'warning' };
 beforeEach(() => {
   mockCreate.mockReset();
   mockEnv.isLlmConfigured = true;
+  mockEnv.LLM_REASONING_EFFORT = 'low';
 });
 
 describe('buildPrompt', () => {
@@ -76,7 +79,7 @@ describe('generateMessage', () => {
     mockCreate.mockResolvedValue({
       choices: [{
         message: {
-          content: ' "Payments API is slow: 4200 ms, above the 3000 ms threshold." ',
+          content: ' "Payments API is slow: 4200\u202fms, above the 3000\u202fms threshold." ',
         },
       }],
     });
@@ -91,12 +94,27 @@ describe('generateMessage', () => {
 
     const request = mockCreate.mock.calls[0][0];
     expect(request.model).toBe('test-model');
-    expect(request.temperature).toBe(0.2);
-    expect(request.max_tokens).toBe(120);
+    expect(request.temperature).toBe(0.6);
+    expect(request.max_completion_tokens).toBe(1024);
+    expect(request.max_tokens).toBeUndefined();
+    expect(request.reasoning_effort).toBe('low');
     expect(request.messages).toHaveLength(2);
     expect(request.messages[0].role).toBe('system');
     expect(request.messages[0].content).toBe(SYSTEM_PROMPT);
     expect(request.messages[1].content).toContain('"api_name": "Payments API"');
+  });
+
+  it('omits reasoning_effort when it is not configured', async () => {
+    mockEnv.LLM_REASONING_EFFORT = '';
+    mockCreate.mockResolvedValue({
+      choices: [{ message: { content: 'Payments API is slow.' } }],
+    });
+
+    await generateMessage(item, slowAnomaly);
+
+    const request = mockCreate.mock.calls[0][0];
+    expect(request.reasoning_effort).toBeUndefined();
+    expect(request.max_completion_tokens).toBe(1024);
   });
 
   it('retries once and succeeds', async () => {

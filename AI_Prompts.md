@@ -83,8 +83,10 @@ I wrote and own the final decisions.
 
 ## Part 3: LLM prompts inside the app
 
-Source: `src/services/aiAlert.js`. Settings: temperature `0.2`,
-`max_tokens` `120`, timeout `LLM_TIMEOUT_MS`, and one retry.
+Source: `src/services/aiAlert.js`. Settings: temperature `0.6`,
+`max_completion_tokens` `LLM_MAX_COMPLETION_TOKENS` (default `1024`),
+optional `reasoning_effort` from `LLM_REASONING_EFFORT`, timeout
+`LLM_TIMEOUT_MS`, and one retry.
 
 ### System prompt
 
@@ -139,4 +141,13 @@ tests, fixed refresh flicker, and updated docs and sample data
 
 ```
 lets think step by step and start building
+```
+
+### Prompt 7: Fix the Groq reasoning model
+Date: 23 Oct 2026
+Result: switched to `max_completion_tokens`, added optional
+`reasoning_effort`, raised the completion budget, and updated tests/docs
+
+```
+go with option b
 ```

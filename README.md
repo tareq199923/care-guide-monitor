@@ -59,6 +59,8 @@ Copy `.env.example` to `.env` and fill in the values:
 | `LLM_API_KEY` | empty | API key for the LLM provider |
 | `LLM_MODEL` | empty | Model name |
 | `LLM_TIMEOUT_MS` | `10000` | LLM request timeout |
+| `LLM_MAX_COMPLETION_TOKENS` | `1024` | Maximum completion tokens; reasoning models need headroom |
+| `LLM_REASONING_EFFORT` | empty | Optional `reasoning_effort` value, such as `low` for Groq GPT-OSS |
 | `LOG_LEVEL` | `info` | Winston log level |
 
 LLM settings are optional. When they are missing, alerts use the template
@@ -237,6 +239,11 @@ once, then `src/utils/fallbackMessages.js` produces a deterministic message
 with `aiGenerated` set to false. If the LLM settings are missing, the
 fallback is used directly. AI and fallback messages are capped at 500
 characters. The exact prompts are recorded in `AI_Prompts.md`.
+
+Reasoning models need a larger completion budget than their visible answer.
+The request uses `LLM_MAX_COMPLETION_TOKENS` (default 1024) and optionally
+sends `LLM_REASONING_EFFORT`. For Groq's GPT-OSS models, set
+`LLM_REASONING_EFFORT=low` to reduce latency for these short alerts.
 
 ## Frontend dashboard
 

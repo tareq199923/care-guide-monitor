@@ -21,6 +21,8 @@ const env = {
   LLM_API_KEY: process.env.LLM_API_KEY || '',
   LLM_MODEL: process.env.LLM_MODEL || '',
   LLM_TIMEOUT_MS: readPositiveNumber('LLM_TIMEOUT_MS', 10000),
+  LLM_MAX_COMPLETION_TOKENS: readPositiveNumber('LLM_MAX_COMPLETION_TOKENS', 1024),
+  LLM_REASONING_EFFORT: process.env.LLM_REASONING_EFFORT || '',
   LOG_LEVEL: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'test' ? 'error' : 'info'),
 };
 
