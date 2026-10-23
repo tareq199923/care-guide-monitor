@@ -29,8 +29,9 @@ Last updated: 2026-10-23
   reconciliation
 - Review fix: capped `api_name` at 200 characters and fallback messages at
   500 characters, with regression tests
+- Review fix: added static-frontend serving tests for `/` and `/app.js`
 
 ## Next
-- Add a static-frontend test and harden duplicate checks in one batch
+- Harden duplicate checks in one batch
 - Final docs cleanup, record the 5–10 minute video, and convert
   AI_Prompts.md to AI_Prompts.docx
