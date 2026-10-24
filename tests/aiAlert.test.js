@@ -166,6 +166,50 @@ describe('generateMessage', () => {
     expect(result.message).toContain('responding slowly');
   });
 
+  it('normalizes non-breaking hyphens and removes zero-width characters', async () => {
+    const nbsp = String.fromCharCode(0x2011);
+    const zwsp = String.fromCharCode(0x200b);
+    const zwnj = String.fromCharCode(0x200c);
+    const zwj = String.fromCharCode(0x200d);
+    const bom = String.fromCharCode(0xfeff);
+    const content =
+      'Payments API is slow: 4200' + nbsp + 'ms'
+      + zwsp + zwnj + zwj + bom
+      + ' (threshold 3000' + nbsp + 'ms).';
+
+    mockCreate.mockResolvedValue({
+      choices: [{ message: { content } }],
+    });
+
+    const result = await generateMessage(item, slowAnomaly);
+
+    expect(result.message).toBe('Payments API is slow: 4200-ms (threshold 3000-ms).');
+    expect(result.message).not.toContain(zwsp);
+    expect(result.message).not.toContain(zwnj);
+    expect(result.message).not.toContain(zwj);
+    expect(result.message).not.toContain(bom);
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+  });
+
+  it('normalizes thin and ideographic spaces and collapses repeated spaces', async () => {
+    const thin = String.fromCharCode(0x2009);
+    const ideographic = String.fromCharCode(0x3000);
+    const content =
+      '  Payments' + thin + 'API' + ideographic + ideographic
+      + 'is slow: 4200' + thin + 'ms.' + ideographic;
+
+    mockCreate.mockResolvedValue({
+      choices: [{ message: { content } }],
+    });
+
+    const result = await generateMessage(item, slowAnomaly);
+
+    expect(result.message).toBe('Payments API is slow: 4200 ms.');
+    expect(result.message).not.toContain(thin);
+    expect(result.message).not.toContain(ideographic);
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+  });
+
   it('caps a long message at 500 characters', async () => {
     mockCreate.mockResolvedValue({
       choices: [{ message: { content: 'x'.repeat(600) } }],

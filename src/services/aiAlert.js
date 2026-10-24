@@ -76,7 +76,13 @@ function cleanMessage(rawMessage) {
   }
 
   const message = rawMessage
-    .replace(/[\u00a0\u202f]/g, ' ')
+    .replace(/\p{Zs}/gu, ' ')
+    .replace(/\u200b/g, '')
+    .replace(/\u200c/g, '')
+    .replace(/\u200d/g, '')
+    .replace(/\ufeff/g, '')
+    .replace(/\u2011/g, '-')
+    .replace(/ {2,}/g, ' ')
     .trim()
     .replace(/^["'`]+|["'`]+$/g, '')
     .trim();

@@ -225,3 +225,30 @@ is healthy, not "slow response". Run npm run check, commit as
 "fix(dns): load .env before applying DNS override", and update PROGRESS.md
 and AI_Prompts.md (Prompt 9).
 ```
+
+### Prompt 10: Consecutive failure ceiling and LLM message cleanup
+Date: 24 Oct 2026
+Result: `updateExistingAlert` in `src/services/alertPolicy.js` now uses
+`$max` to keep the highest `consecutiveFailures` so concurrent updates for
+the same API cannot lower the stored value; `cleanMessage` in
+`src/services/aiAlert.js` now normalizes all Unicode space separators
+(`\p{Zs}`, including U+00A0, U+202F, U+2009 and U+3000) to a single ASCII
+space, collapses repeated spaces, normalizes U+2011 (non-breaking hyphen)
+to `-`, and removes zero-width characters (U+200B, U+200C, U+200D, U+FEFF).
+Regression tests in `tests/alertPolicy.test.js` and `tests/aiAlert.test.js`
+cover the failure ceiling, U+202F normalization, and a message with thin
+and ideographic spaces plus repeated spaces.
+
+```
+Two small fixes, one commit each, npm run check green before each:
+1. fix(alert-policy): in updateExistingAlert in src/services/alertPolicy.js
+   keep the highest consecutiveFailures using $max instead of $set, so
+   concurrent updates for the same API cannot lower it. Add a test that
+   applies updates with counts 3 then 1 and asserts the stored value
+   stays 3.
+2. fix(ai): in cleanMessage in src/services/aiAlert.js also normalize
+   U+2011 (non-breaking hyphen) to "-", and remove zero-width characters
+   (U+200B, U+200C, U+200D, U+FEFF). Add a test with a message containing
+   those characters.
+Then update PROGRESS.md and AI_Prompts.md (Prompt 10).
+```

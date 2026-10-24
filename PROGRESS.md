@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-10-23
+Last updated: 2026-10-24
 
 ## Done
 - Project setup, MongoDB Atlas ready, CLAUDE.md written
@@ -55,6 +55,17 @@ Last updated: 2026-10-23
   called before `env.js` runs; regression test spawns a child process with a
   temp `.env` and asserts `dns.getServers()` reflects it; `sample-assignment.json`
   PatientDataAPI label corrected from "slow response" to "healthy"
+
+- Fix: `updateExistingAlert` in `src/services/alertPolicy.js` now uses
+  `$max` to keep the highest `consecutiveFailures` so concurrent updates
+  for the same API cannot lower the stored value; regression test applies
+  counts 3 then 1 and asserts the stored value stays 3
+- Fix: `cleanMessage` in `src/services/aiAlert.js` now normalizes all
+  Unicode space separators (`\p{Zs}`, including U+00A0, U+202F, U+2009 and
+  U+3000) to one ASCII space and collapses repeated spaces, in addition to
+  normalizing U+2011 (non-breaking hyphen) to `-` and removing zero-width
+  characters (U+200B, U+200C, U+200D, U+FEFF); regression tests cover
+  U+202F, U+2011, zero-width characters, and thin/ideographic spaces
 
 ## Next
 - Re-test the Groq LLM after rotating credentials
